@@ -158,11 +158,11 @@
 
   /* Product card hover effect */
   .product-card {
-    @apply group relative overflow-hidden transition-all duration-500;
+    @apply relative overflow-hidden transition-all duration-500;
   }
 
   .product-card-image {
-    @apply transition-transform duration-700 ease-out group-hover:scale-105;
+    @apply transition-transform duration-700 ease-out;
   }
 
   /* Skeleton loading */

@@ -5,7 +5,7 @@ import {
   Image, Settings, LogOut, Menu, X, ChevronRight, Plus,
   Edit, Trash2, Eye, Sparkles
 } from 'lucide-react';
-import { AIDescriptionGenerator } from '@/components/admin/AIDescriptionGenerator';
+import { AIImageGenerator } from '@/components/admin/AIImageGenerator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* AI Demo Section */}
-      <AIDescriptionGenerator />
+      <AIImageGenerator />
 
       <div className="bg-card border rounded-sm p-6">
         <h2 className="font-display text-lg font-semibold mb-4">Recent Orders</h2>

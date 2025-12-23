@@ -1,0 +1,389 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, CreditCard, Lock, Truck } from 'lucide-react';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
+import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+const Checkout = () => {
+  const navigate = useNavigate();
+  const { items, subtotal, clearCart } = useCart();
+  const { user, profile } = useAuth();
+  
+  const [step, setStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Shipping info
+  const [shippingInfo, setShippingInfo] = useState({
+    fullName: profile?.full_name || '',
+    email: profile?.email || '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: 'US',
+  });
+  
+  const [shippingMethod, setShippingMethod] = useState('standard');
+  
+  const shippingCost = shippingMethod === 'express' ? 14.99 : subtotal > 100 ? 0 : 9.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shippingCost + tax;
+
+  if (!user) {
+    navigate('/auth');
+    return null;
+  }
+
+  if (items.length === 0) {
+    navigate('/cart');
+    return null;
+  }
+
+  const handleShippingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep(2);
+  };
+
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    try {
+      // Generate order number
+      const orderNumber = `LT-${Date.now().toString(36).toUpperCase()}`;
+
+      // Create order in database
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          order_number: orderNumber,
+          status: 'pending',
+          subtotal: subtotal,
+          shipping_amount: shippingCost,
+          tax_amount: tax,
+          total: total,
+          shipping_address: shippingInfo,
+          payment_status: 'paid', // Simulated
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        variant_id: item.variant_id,
+        product_name: item.product?.name || 'Unknown Product',
+        variant_details: item.variant ? `${item.variant.size} / ${item.variant.color}` : null,
+        quantity: item.quantity,
+        unit_price: item.product?.sale_price || item.product?.base_price || 0,
+        total_price: (item.product?.sale_price || item.product?.base_price || 0) * item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Clear cart
+      await clearCart();
+
+      toast.success('Order placed successfully!');
+      navigate('/account');
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error('Failed to process order. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="pt-20 md:pt-24">
+        <div className="container-luxe py-8">
+          <Link to="/cart" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Cart
+          </Link>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Checkout Form */}
+            <div className="lg:col-span-2">
+              {/* Progress */}
+              <div className="flex items-center mb-8">
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 1 ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  1
+                </div>
+                <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-accent' : 'bg-muted'}`} />
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 2 ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  2
+                </div>
+              </div>
+
+              {step === 1 && (
+                <form onSubmit={handleShippingSubmit} className="space-y-6">
+                  <div>
+                    <h2 className="font-display text-xl font-semibold mb-4 flex items-center gap-2">
+                      <Truck className="h-5 w-5" />
+                      Shipping Information
+                    </h2>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <Input
+                          id="fullName"
+                          value={shippingInfo.fullName}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={shippingInfo.email}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={shippingInfo.phone}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="address">Address</Label>
+                        <Input
+                          id="address"
+                          value={shippingInfo.address}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City</Label>
+                        <Input
+                          id="city"
+                          value={shippingInfo.city}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="state">State</Label>
+                        <Input
+                          id="state"
+                          value={shippingInfo.state}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="postalCode">Postal Code</Label>
+                        <Input
+                          id="postalCode"
+                          value={shippingInfo.postalCode}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, postalCode: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="country">Country</Label>
+                        <Input
+                          id="country"
+                          value={shippingInfo.country}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, country: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <h3 className="font-medium mb-4">Shipping Method</h3>
+                    <RadioGroup value={shippingMethod} onValueChange={setShippingMethod}>
+                      <div className="flex items-center justify-between border rounded-sm p-4 cursor-pointer hover:border-accent">
+                        <div className="flex items-center gap-3">
+                          <RadioGroupItem value="standard" id="standard" />
+                          <Label htmlFor="standard" className="cursor-pointer">
+                            <span className="font-medium">Standard Shipping</span>
+                            <p className="text-sm text-muted-foreground">5-7 business days</p>
+                          </Label>
+                        </div>
+                        <span className="font-medium">{subtotal > 100 ? 'Free' : '$9.99'}</span>
+                      </div>
+                      <div className="flex items-center justify-between border rounded-sm p-4 cursor-pointer hover:border-accent mt-2">
+                        <div className="flex items-center gap-3">
+                          <RadioGroupItem value="express" id="express" />
+                          <Label htmlFor="express" className="cursor-pointer">
+                            <span className="font-medium">Express Shipping</span>
+                            <p className="text-sm text-muted-foreground">2-3 business days</p>
+                          </Label>
+                        </div>
+                        <span className="font-medium">$14.99</span>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <Button type="submit" className="w-full" size="lg">
+                    Continue to Payment
+                  </Button>
+                </form>
+              )}
+
+              {step === 2 && (
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                  <div>
+                    <h2 className="font-display text-xl font-semibold mb-4 flex items-center gap-2">
+                      <CreditCard className="h-5 w-5" />
+                      Payment Information
+                    </h2>
+
+                    <div className="bg-muted/50 border rounded-sm p-6 mb-6">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                        <Lock className="h-4 w-4" />
+                        Secure payment - Your data is encrypted
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="cardNumber">Card Number</Label>
+                          <Input
+                            id="cardNumber"
+                            placeholder="1234 5678 9012 3456"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="expiry">Expiry Date</Label>
+                            <Input
+                              id="expiry"
+                              placeholder="MM/YY"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="cvc">CVC</Label>
+                            <Input
+                              id="cvc"
+                              placeholder="123"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="cardName">Name on Card</Label>
+                          <Input
+                            id="cardName"
+                            placeholder="John Doe"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground text-center">
+                      This is a demo checkout. No real payment will be processed.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
+                      Back
+                    </Button>
+                    <Button type="submit" className="flex-1" size="lg" disabled={isProcessing}>
+                      {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-secondary/30 rounded-sm p-6 sticky top-24">
+                <h2 className="font-display text-xl font-semibold mb-4">Order Summary</h2>
+
+                <div className="space-y-4 mb-6">
+                  {items.map(item => (
+                    <div key={item.id} className="flex gap-3">
+                      <img
+                        src={item.product?.images[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&q=80'}
+                        alt={item.product?.name}
+                        className="w-16 h-20 object-cover rounded-sm"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm line-clamp-1">{item.product?.name}</p>
+                        {item.variant && (
+                          <p className="text-xs text-muted-foreground">
+                            {item.variant.size} / {item.variant.color}
+                          </p>
+                        )}
+                        <p className="text-sm mt-1">
+                          ${item.product?.sale_price || item.product?.base_price} × {item.quantity}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span>{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Tax</span>
+                    <span>${tax.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="flex justify-between font-semibold text-lg">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Checkout;

@@ -3,8 +3,9 @@ import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, Tag, 
   Image, Settings, LogOut, Menu, X, ChevronRight, Plus,
-  Edit, Trash2, Eye
+  Edit, Trash2, Eye, Sparkles
 } from 'lucide-react';
+import { AIDescriptionGenerator } from '@/components/admin/AIDescriptionGenerator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -177,6 +178,9 @@ const AdminDashboard = () => {
           <p className="text-3xl font-bold mt-2">{stats.pendingOrders}</p>
         </div>
       </div>
+
+      {/* AI Demo Section */}
+      <AIDescriptionGenerator />
 
       <div className="bg-card border rounded-sm p-6">
         <h2 className="font-display text-lg font-semibold mb-4">Recent Orders</h2>

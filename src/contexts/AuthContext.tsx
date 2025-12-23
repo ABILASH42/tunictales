@@ -73,15 +73,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(profileData as Profile);
       }
 
-      // Fetch role
+      // Fetch roles - prioritize admin role if user has multiple roles
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', userId)
-        .maybeSingle();
+        .eq('user_id', userId);
       
-      if (roleData) {
-        setRole(roleData.role as UserRole);
+      if (roleData && roleData.length > 0) {
+        // Check if user has admin role
+        const hasAdmin = roleData.some(r => r.role === 'admin');
+        const hasModerator = roleData.some(r => r.role === 'moderator');
+        
+        if (hasAdmin) {
+          setRole('admin');
+        } else if (hasModerator) {
+          setRole('moderator');
+        } else {
+          setRole(roleData[0].role as UserRole);
+        }
       }
     } catch (error) {
       console.error('Error fetching user data:', error);

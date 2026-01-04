@@ -81,11 +81,11 @@ export function HeroSection() {
           >
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-accent" />
-              <span>Free Shipping Above ₹999</span>
+              <span>Premium Quality</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-accent" />
-              <span>Easy Returns</span>
+              <span>100% Authentic</span>
             </div>
           </div>
         </div>

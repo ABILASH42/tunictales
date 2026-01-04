@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { NAV_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/logo.png';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,17 +68,11 @@ export function Header() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <div className="flex flex-col items-center">
-              {/* Logo placeholder */}
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-primary flex items-center justify-center mb-1 group-hover:border-accent transition-colors">
-                <span className="font-display text-lg md:text-xl font-bold text-primary group-hover:text-accent transition-colors">
-                  TT
-                </span>
-              </div>
-              <span className="font-display text-sm md:text-base font-semibold tracking-[0.2em] text-primary group-hover:text-accent transition-colors hidden md:block">
-                TUNIC TALES
-              </span>
-            </div>
+            <img 
+              src={logo} 
+              alt="Tunic Tales" 
+              className="h-12 md:h-16 w-auto transition-transform group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Navigation */}

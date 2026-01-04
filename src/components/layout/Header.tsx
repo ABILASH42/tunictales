@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Heart, User, Menu, X, Search, Package } from 'lucide-react';
+import { ShoppingBag, Heart, User, Menu, X, Package } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -99,9 +99,6 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 md:gap-2">
-            <Button variant="ghost" size="icon" className="hidden md:flex hover:text-accent transition-colors">
-              <Search className="h-5 w-5" />
-            </Button>
             <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
               <Link to="/wishlist">
                 <Heart className="h-5 w-5" />

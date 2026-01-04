@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SAMPLE_IMAGES } from '@/lib/constants';
+import heroKurtiShop from '@/assets/hero-kurti-shop.jpg';
 
 export function HeroSection() {
   return (
@@ -9,7 +9,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={SAMPLE_IMAGES.hero[0]}
+          src={heroKurtiShop}
           alt="Fashion hero"
           className="w-full h-full object-cover"
         />

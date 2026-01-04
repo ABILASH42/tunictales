@@ -4,7 +4,6 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { TrendingProducts } from '@/components/home/TrendingProducts';
 import { OfferBanner } from '@/components/home/OfferBanner';
-import { CustomDesignCTA } from '@/components/home/CustomDesignCTA';
 import { Testimonials } from '@/components/home/Testimonials';
 import { Newsletter } from '@/components/home/Newsletter';
 
@@ -17,7 +16,6 @@ const Index = () => {
         <OfferBanner />
         <FeaturedCategories />
         <TrendingProducts />
-        <CustomDesignCTA />
         <Testimonials />
         <Newsletter />
       </main>

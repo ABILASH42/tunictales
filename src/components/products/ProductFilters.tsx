@@ -8,12 +8,9 @@ import { cn } from '@/lib/utils';
 import { Category } from '@/types';
 
 interface ProductFiltersProps {
-  categories: Category[];
-  selectedCategory?: string;
   selectedSizes: string[];
   selectedColors: string[];
   priceRange: [number, number];
-  onCategoryChange: (category: string | undefined) => void;
   onSizesChange: (sizes: string[]) => void;
   onColorsChange: (colors: string[]) => void;
   onPriceChange: (range: [number, number]) => void;
@@ -21,19 +18,15 @@ interface ProductFiltersProps {
 }
 
 export function ProductFilters({
-  categories,
-  selectedCategory,
   selectedSizes,
   selectedColors,
   priceRange,
-  onCategoryChange,
   onSizesChange,
   onColorsChange,
   onPriceChange,
   onClearFilters,
 }: ProductFiltersProps) {
   const [openSections, setOpenSections] = useState({
-    category: true,
     size: true,
     color: true,
     price: true,
@@ -59,7 +52,7 @@ export function ProductFilters({
     }
   };
 
-  const hasActiveFilters = selectedCategory || selectedSizes.length > 0 || selectedColors.length > 0 || priceRange[0] > 0 || priceRange[1] < 1000;
+  const hasActiveFilters = selectedSizes.length > 0 || selectedColors.length > 0 || priceRange[0] > 0 || priceRange[1] < 1000;
 
   return (
     <div className="space-y-6">
@@ -68,42 +61,6 @@ export function ProductFilters({
           Clear All Filters
         </Button>
       )}
-
-      {/* Categories */}
-      <div className="border-b border-border pb-4">
-        <button
-          onClick={() => toggleSection('category')}
-          className="flex items-center justify-between w-full py-2 font-medium"
-        >
-          Categories
-          <ChevronDown className={cn('h-4 w-4 transition-transform', openSections.category && 'rotate-180')} />
-        </button>
-        {openSections.category && (
-          <div className="mt-2 space-y-2">
-            <button
-              onClick={() => onCategoryChange(undefined)}
-              className={cn(
-                'block w-full text-left py-1 text-sm transition-colors',
-                !selectedCategory ? 'text-accent font-medium' : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              All Products
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => onCategoryChange(cat.slug)}
-                className={cn(
-                  'block w-full text-left py-1 text-sm transition-colors',
-                  selectedCategory === cat.slug ? 'text-accent font-medium' : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
 
       {/* Sizes */}
       <div className="border-b border-border pb-4">

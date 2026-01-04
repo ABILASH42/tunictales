@@ -10,43 +10,28 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
-import { Product, Category } from '@/types';
+import { Product } from '@/types';
 import { cn } from '@/lib/utils';
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   
   // Filters
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    searchParams.get('category') || undefined
-  );
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
 
   useEffect(() => {
-    fetchCategories();
     fetchProducts();
-  }, [selectedCategory, sortBy]);
-
-  const fetchCategories = async () => {
-    const { data } = await supabase.from('categories').select('*').order('sort_order');
-    if (data) setCategories(data as Category[]);
-  };
+  }, [sortBy]);
 
   const fetchProducts = async () => {
     setIsLoading(true);
     let query = supabase.from('products').select('*');
-    
-    if (selectedCategory) {
-      const cat = categories.find(c => c.slug === selectedCategory);
-      if (cat) query = query.eq('category_id', cat.id);
-    }
     
     if (searchParams.get('filter') === 'new') {
       query = query.eq('is_new', true);
@@ -80,21 +65,10 @@ const Shop = () => {
     setIsLoading(false);
   };
 
-  const handleCategoryChange = (category: string | undefined) => {
-    setSelectedCategory(category);
-    if (category) {
-      setSearchParams({ category });
-    } else {
-      setSearchParams({});
-    }
-  };
-
   const clearFilters = () => {
-    setSelectedCategory(undefined);
     setSelectedSizes([]);
     setSelectedColors([]);
     setPriceRange([0, 1000]);
-    setSearchParams({});
   };
 
   return (
@@ -116,12 +90,9 @@ const Shop = () => {
             {/* Desktop Filters */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <ProductFilters
-                categories={categories}
-                selectedCategory={selectedCategory}
                 selectedSizes={selectedSizes}
                 selectedColors={selectedColors}
                 priceRange={priceRange}
-                onCategoryChange={handleCategoryChange}
                 onSizesChange={setSelectedSizes}
                 onColorsChange={setSelectedColors}
                 onPriceChange={setPriceRange}
@@ -148,12 +119,9 @@ const Shop = () => {
                       </SheetHeader>
                       <div className="mt-6">
                         <ProductFilters
-                          categories={categories}
-                          selectedCategory={selectedCategory}
                           selectedSizes={selectedSizes}
                           selectedColors={selectedColors}
                           priceRange={priceRange}
-                          onCategoryChange={handleCategoryChange}
                           onSizesChange={setSelectedSizes}
                           onColorsChange={setSelectedColors}
                           onPriceChange={setPriceRange}

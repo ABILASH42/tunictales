@@ -1,100 +1,188 @@
-// Sample product images from Unsplash
+// Tunic Tales - Premium Indian Ethnic Boutique
+
+// Sample product images
 export const SAMPLE_IMAGES = {
   hero: [
-    'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80',
-    'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&q=80',
-    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=80',
+    'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1920&q=80',
   ],
   products: {
-    tshirts: [
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80',
-      'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=800&q=80',
-      'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&q=80',
+    kurta: [
+      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80',
+      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80',
+      'https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80',
     ],
-    shirts: [
-      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80',
-      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=800&q=80',
-      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&q=80',
+    kurtaSets: [
+      'https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80',
+      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80',
     ],
-    pants: [
-      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80',
-      'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&q=80',
-      'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80',
+    coordSets: [
+      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80',
     ],
-    jackets: [
-      'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80',
-      'https://images.unsplash.com/photo-1544923246-77307dd628b8?w=800&q=80',
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80',
-    ],
-    dresses: [
-      'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80',
-      'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&q=80',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80',
-    ],
-    accessories: [
-      'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800&q=80',
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80',
-      'https://images.unsplash.com/photo-1509941943102-10c232fc06e0?w=800&q=80',
+    salwarSets: [
+      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80',
     ],
   },
   categories: {
-    men: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80',
-    women: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&q=80',
-    accessories: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&q=80',
-    newArrivals: 'https://images.unsplash.com/photo-1558171813-4c088753af8f?w=800&q=80',
+    kurta: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80',
+    kurtaSets: 'https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80',
+    coordSets: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80',
+    salwarSets: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80',
   },
   testimonials: [
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
+    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80',
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
   ],
 };
 
-export const SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 
 export const COLORS = [
-  { name: 'Black', hex: '#1a1a1a' },
-  { name: 'White', hex: '#ffffff' },
-  { name: 'Navy', hex: '#1e3a5f' },
-  { name: 'Gray', hex: '#6b7280' },
-  { name: 'Beige', hex: '#d4c5b5' },
-  { name: 'Olive', hex: '#556b2f' },
-  { name: 'Burgundy', hex: '#722f37' },
-  { name: 'Camel', hex: '#c19a6b' },
+  { name: 'Dusty Rose', hex: '#d4a5a5' },
+  { name: 'Sage Green', hex: '#9caf88' },
+  { name: 'Terracotta', hex: '#c67d4d' },
+  { name: 'Maroon', hex: '#722f37' },
+  { name: 'Ivory', hex: '#f8f4e3' },
+  { name: 'Mustard', hex: '#d4a43e' },
+  { name: 'Navy', hex: '#2c3e50' },
+  { name: 'Blush Pink', hex: '#e8c4c4' },
 ];
 
 export const PRICE_RANGES = [
-  { label: 'Under $50', min: 0, max: 50 },
-  { label: '$50 - $100', min: 50, max: 100 },
-  { label: '$100 - $200', min: 100, max: 200 },
-  { label: '$200 - $500', min: 200, max: 500 },
-  { label: 'Over $500', min: 500, max: Infinity },
+  { label: 'Under ₹1,500', min: 0, max: 1500 },
+  { label: '₹1,500 - ₹3,000', min: 1500, max: 3000 },
+  { label: '₹3,000 - ₹5,000', min: 3000, max: 5000 },
+  { label: '₹5,000 - ₹10,000', min: 5000, max: 10000 },
+  { label: 'Above ₹10,000', min: 10000, max: Infinity },
 ];
 
 export const NAV_LINKS = [
-  { label: 'Shop', href: '/shop' },
-  { label: 'New Arrivals', href: '/shop?filter=new' },
-  { label: 'Sale', href: '/sale' },
-  { label: 'Custom', href: '/designer' },
+  { label: 'Home', href: '/' },
+  { label: 'Kurta', href: '/shop?category=kurta' },
+  { label: 'Kurta Sets', href: '/shop?category=kurta-sets' },
+  { label: 'Coord Sets', href: '/shop?category=coord-sets' },
+  { label: 'Salwar Sets', href: '/shop?category=salwar-sets' },
 ];
 
 export const FOOTER_LINKS = {
   shop: [
+    { label: 'Kurta', href: '/shop?category=kurta' },
+    { label: 'Kurta Sets', href: '/shop?category=kurta-sets' },
+    { label: 'Coord Sets', href: '/shop?category=coord-sets' },
+    { label: 'Salwar Sets', href: '/shop?category=salwar-sets' },
     { label: 'New Arrivals', href: '/shop?filter=new' },
-    { label: 'Best Sellers', href: '/shop?sort=popular' },
-    { label: 'Sale', href: '/sale' },
-    { label: 'All Products', href: '/shop' },
   ],
   help: [
     { label: 'Contact Us', href: '/contact' },
+    { label: 'Size Guide', href: '/size-guide' },
+    { label: 'Shipping & Delivery', href: '/shipping' },
+    { label: 'Returns & Exchange', href: '/returns' },
     { label: 'FAQs', href: '/faq' },
-    { label: 'Shipping', href: '/shipping' },
-    { label: 'Returns', href: '/returns' },
   ],
   about: [
     { label: 'Our Story', href: '/about' },
+    { label: 'Artisan Partners', href: '/artisans' },
     { label: 'Sustainability', href: '/sustainability' },
     { label: 'Careers', href: '/careers' },
-    { label: 'Press', href: '/press' },
   ],
 };
+
+// Sample products for Tunic Tales
+export const TUNIC_TALES_PRODUCTS = [
+  {
+    id: '1',
+    name: 'Rosewood Embroidered Kurta',
+    slug: 'rosewood-embroidered-kurta',
+    base_price: 2499,
+    sale_price: null,
+    images: ['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80'],
+    is_new: true,
+    is_on_sale: false,
+    rating: 4.8,
+    category: 'kurta',
+  },
+  {
+    id: '2',
+    name: 'Sage Garden Kurta Set',
+    slug: 'sage-garden-kurta-set',
+    base_price: 4999,
+    sale_price: 3999,
+    images: ['https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80'],
+    is_new: false,
+    is_on_sale: true,
+    rating: 4.9,
+    category: 'kurta-sets',
+  },
+  {
+    id: '3',
+    name: 'Terracotta Coord Set',
+    slug: 'terracotta-coord-set',
+    base_price: 3799,
+    sale_price: null,
+    images: ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80'],
+    is_new: true,
+    is_on_sale: false,
+    rating: 4.7,
+    category: 'coord-sets',
+  },
+  {
+    id: '4',
+    name: 'Royal Maroon Salwar Set',
+    slug: 'royal-maroon-salwar-set',
+    base_price: 6999,
+    sale_price: 5499,
+    images: ['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80'],
+    is_new: false,
+    is_on_sale: true,
+    rating: 5.0,
+    category: 'salwar-sets',
+  },
+  {
+    id: '5',
+    name: 'Pearl White Chikankari Kurta',
+    slug: 'pearl-white-chikankari-kurta',
+    base_price: 3299,
+    sale_price: null,
+    images: ['https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80'],
+    is_new: true,
+    is_on_sale: false,
+    rating: 4.6,
+    category: 'kurta',
+  },
+  {
+    id: '6',
+    name: 'Blush Pink Palazzo Set',
+    slug: 'blush-pink-palazzo-set',
+    base_price: 4299,
+    sale_price: 3599,
+    images: ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80'],
+    is_new: false,
+    is_on_sale: true,
+    rating: 4.8,
+    category: 'kurta-sets',
+  },
+  {
+    id: '7',
+    name: 'Mustard Mirror Work Coord',
+    slug: 'mustard-mirror-work-coord',
+    base_price: 4599,
+    sale_price: null,
+    images: ['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80'],
+    is_new: true,
+    is_on_sale: false,
+    rating: 4.9,
+    category: 'coord-sets',
+  },
+  {
+    id: '8',
+    name: 'Navy Blue Anarkali Set',
+    slug: 'navy-blue-anarkali-set',
+    base_price: 7999,
+    sale_price: 6499,
+    images: ['https://images.unsplash.com/photo-1583391733956-6c78276477e5?w=800&q=80'],
+    is_new: false,
+    is_on_sale: true,
+    rating: 4.7,
+    category: 'salwar-sets',
+  },
+];

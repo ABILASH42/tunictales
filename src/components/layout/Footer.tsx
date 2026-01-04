@@ -30,7 +30,7 @@ export function Footer() {
               <img 
                 src={logo} 
                 alt="Tunic Tales" 
-                className="h-20 w-auto brightness-110"
+                className="h-20 w-auto brightness-0 invert"
               />
             </Link>
             <p className="text-primary-foreground/70 mb-6 max-w-sm leading-relaxed">

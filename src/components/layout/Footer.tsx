@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { FOOTER_LINKS } from '@/lib/constants';
 import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import logo from '@/assets/logo.png';
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -26,19 +27,11 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border-2 border-primary-foreground/50 flex items-center justify-center">
-                  <span className="font-display text-xl font-bold">TT</span>
-                </div>
-                <div>
-                  <span className="font-display text-xl font-bold tracking-[0.15em] block">
-                    TUNIC TALES
-                  </span>
-                  <span className="text-xs text-primary-foreground/70 tracking-[0.2em]">
-                    HANDCRAFTED WITH LOVE
-                  </span>
-                </div>
-              </div>
+              <img 
+                src={logo} 
+                alt="Tunic Tales" 
+                className="h-16 w-auto brightness-110"
+              />
             </Link>
             <p className="text-primary-foreground/70 mb-6 max-w-sm leading-relaxed">
               Where every stitch tells a story. We bring you the finest handcrafted 

@@ -71,7 +71,7 @@ export function Header() {
             <img 
               src={logo} 
               alt="Tunic Tales" 
-              className="h-16 md:h-20 w-auto transition-transform group-hover:scale-105 sepia saturate-200 hue-rotate-[160deg] brightness-[0.25]"
+              className="h-20 md:h-28 w-auto transition-transform group-hover:scale-105"
             />
           </Link>
 

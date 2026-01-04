@@ -1,60 +1,62 @@
-import { Link } from 'react-router-dom';
-import { Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { Gift, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function OfferBanner() {
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 23,
-    minutes: 59,
-    seconds: 59,
-  });
+  const [isVisible, setIsVisible] = useState(true);
+  const [currentOffer, setCurrentOffer] = useState(0);
+
+  const offers = [
+    { text: "Free Shipping on orders above ₹999", icon: "🚚" },
+    { text: "Use code FIRST15 for 15% off your first order", icon: "🎁" },
+    { text: "Easy 7-day returns on all products", icon: "↩️" },
+  ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        }
-        return { hours: 23, minutes: 59, seconds: 59 };
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
+    const interval = setInterval(() => {
+      setCurrentOffer((prev) => (prev + 1) % offers.length);
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
+  if (!isVisible) return null;
+
   return (
-    <section className="bg-accent text-accent-foreground py-4">
-      <div className="container-luxe">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            <span className="font-medium">Flash Sale - Up to 50% Off</span>
+    <div className="bg-primary text-primary-foreground py-3 relative overflow-hidden">
+      {/* Animated background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_hsl(var(--accent))_1px,_transparent_1px)] bg-[length:20px_20px]" />
+      </div>
+
+      <div className="container-luxe relative">
+        <div className="flex items-center justify-center gap-3">
+          <Gift className="h-4 w-4 text-accent hidden md:block" />
+          <div className="relative h-6 overflow-hidden">
+            {offers.map((offer, index) => (
+              <p
+                key={index}
+                className={cn(
+                  'text-sm text-center absolute inset-0 transition-all duration-500 flex items-center justify-center gap-2',
+                  currentOffer === index
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-6'
+                )}
+              >
+                <span>{offer.icon}</span>
+                <span>{offer.text}</span>
+              </p>
+            ))}
           </div>
-          
-          <div className="flex items-center gap-2 font-mono text-lg">
-            <div className="bg-accent-foreground/20 px-2 py-1 rounded">
-              {String(timeLeft.hours).padStart(2, '0')}
-            </div>
-            <span>:</span>
-            <div className="bg-accent-foreground/20 px-2 py-1 rounded">
-              {String(timeLeft.minutes).padStart(2, '0')}
-            </div>
-            <span>:</span>
-            <div className="bg-accent-foreground/20 px-2 py-1 rounded">
-              {String(timeLeft.seconds).padStart(2, '0')}
-            </div>
-          </div>
-          
-          <Button variant="secondary" size="sm" asChild>
-            <Link to="/sale">Shop Now</Link>
-          </Button>
         </div>
       </div>
-    </section>
+
+      <button
+        onClick={() => setIsVisible(false)}
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+        aria-label="Dismiss banner"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
   );
 }

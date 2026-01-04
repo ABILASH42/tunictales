@@ -1,49 +1,63 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sparkles, Palette, Scissors } from 'lucide-react';
 
 export function CustomDesignCTA() {
   return (
-    <section className="section-padding">
-      <div className="container-luxe">
-        <div className="relative overflow-hidden rounded-sm bg-primary text-primary-foreground">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--accent)),transparent_50%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--accent)),transparent_50%)]" />
+    <section className="section-padding bg-gradient-to-br from-secondary via-background to-secondary/50 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-10 left-10 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+
+      <div className="container-luxe relative">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Icon */}
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-8 animate-float">
+            <Sparkles className="h-8 w-8 text-accent" />
           </div>
-          
-          <div className="relative grid lg:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-accent/20 text-accent px-3 py-1 rounded-full text-sm font-medium mb-4">
-                <Sparkles className="h-4 w-4" />
-                Custom Design Studio
-              </div>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                Create Your Own
-                <br />
-                <span className="text-accent">Unique Style</span>
-              </h2>
-              <p className="text-primary-foreground/70 mb-8 max-w-lg">
-                Express yourself with our custom t-shirt designer. Upload your artwork, 
-                add text, and create something truly one-of-a-kind.
+
+          {/* Content */}
+          <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
+            Design Your Own
+            <span className="text-primary italic"> Story</span>
+          </h2>
+          <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+            Create something uniquely yours. Our skilled artisans will bring your vision to life
+            with handcrafted precision and traditional techniques.
+          </p>
+
+          {/* Features */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="flex flex-col items-center p-6 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 hover-lift">
+              <Palette className="h-8 w-8 text-accent mb-4" />
+              <h3 className="font-display font-semibold mb-2">Choose Colors</h3>
+              <p className="text-sm text-muted-foreground">
+                Pick from our exclusive palette of traditional hues
               </p>
-              <Button size="lg" variant="secondary" className="group" asChild>
-                <Link to="/designer">
-                  Start Designing
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
             </div>
-            
-            <div className="relative aspect-square max-w-md mx-auto lg:mx-0">
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-transparent rounded-lg" />
-              <img
-                src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"
-                alt="Custom t-shirt design"
-                className="w-full h-full object-cover rounded-lg"
-              />
+            <div className="flex flex-col items-center p-6 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 hover-lift">
+              <Scissors className="h-8 w-8 text-accent mb-4" />
+              <h3 className="font-display font-semibold mb-2">Select Fabric</h3>
+              <p className="text-sm text-muted-foreground">
+                Premium fabrics like cotton, silk, and georgette
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 hover-lift">
+              <Sparkles className="h-8 w-8 text-accent mb-4" />
+              <h3 className="font-display font-semibold mb-2">Add Details</h3>
+              <p className="text-sm text-muted-foreground">
+                Embroidery, mirror work, and embellishments
+              </p>
             </div>
           </div>
+
+          {/* CTA */}
+          <Button size="lg" className="h-14 px-10 text-base glow-on-hover" asChild>
+            <Link to="/designer">
+              Start Designing
+              <Sparkles className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

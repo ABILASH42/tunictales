@@ -3,7 +3,7 @@ import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, Tag, 
   Image, Settings, LogOut, Menu, X, ChevronRight, Plus,
-  Edit, Trash2, Eye, Sparkles
+  Edit, Trash2, Eye, Sparkles, Boxes
 } from 'lucide-react';
 import { AIImageGenerator } from '@/components/admin/AIImageGenerator';
 import { Button } from '@/components/ui/button';
@@ -338,12 +338,17 @@ const AdminProducts = () => {
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" asChild>
+                        <Button variant="ghost" size="icon" asChild title="View">
                           <Link to={`/product/${product.slug}`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" asChild>
+                        <Button variant="ghost" size="icon" asChild title="Manage Stock">
+                          <Link to={`/admin/products/${product.id}/stock`}>
+                            <Boxes className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" asChild title="Edit">
                           <Link to={`/admin/products/${product.id}`}>
                             <Edit className="h-4 w-4" />
                           </Link>
@@ -352,6 +357,7 @@ const AdminProducts = () => {
                           variant="ghost"
                           size="icon"
                           onClick={() => deleteProduct(product.id)}
+                          title="Delete"
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Product } from '@/types';
+import { Product, ProductVariant } from '@/types';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProductCardProps {
   product: Product;
@@ -39,9 +40,28 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const inWishlist = isInWishlist(product.id);
   const [justAdded, setJustAdded] = useState(false);
+  const [totalStock, setTotalStock] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchStock = async () => {
+      const { data } = await supabase
+        .from('product_variants')
+        .select('stock_quantity')
+        .eq('product_id', product.id);
+      
+      if (data) {
+        const total = data.reduce((sum, v) => sum + (v.stock_quantity || 0), 0);
+        setTotalStock(total);
+      }
+    };
+    fetchStock();
+  }, [product.id]);
+
+  const isOutOfStock = totalStock !== null && totalStock === 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (isOutOfStock) return;
     addToCart(product.id);
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1500);
@@ -65,10 +85,15 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
           
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.is_new && (
+            {isOutOfStock && (
+              <span className="bg-muted text-muted-foreground text-xs font-medium px-2.5 py-1 rounded">
+                Out of Stock
+              </span>
+            )}
+            {!isOutOfStock && product.is_new && (
               <span className="badge-new">New</span>
             )}
-            {product.is_on_sale && product.sale_price && (
+            {!isOutOfStock && product.is_on_sale && product.sale_price && (
               <span className="badge-sale">
                 {Math.round((1 - product.sale_price / product.base_price) * 100)}% Off
               </span>
@@ -95,12 +120,16 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
             <Button 
               className={cn(
                 'w-full btn-ripple transition-all',
-                justAdded && 'bg-green-600 hover:bg-green-600'
+                justAdded && 'bg-green-600 hover:bg-green-600',
+                isOutOfStock && 'opacity-50 cursor-not-allowed'
               )} 
               size="sm"
               onClick={handleAddToCart}
+              disabled={isOutOfStock}
             >
-              {justAdded ? (
+              {isOutOfStock ? (
+                'Out of Stock'
+              ) : justAdded ? (
                 <>
                   <span className="mr-2">✓</span>
                   Added!

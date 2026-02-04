@@ -57,9 +57,10 @@ export const PRICE_RANGES = [
 ];
 
 export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
   { label: 'Kurta', href: '/shop?category=kurta' },
-  { label: 'Kurta Sets', href: '/shop?category=kurta-sets' },
+  { label: 'Kurta Set', href: '/shop?category=kurta-sets' },
+  { label: 'Co-ord Set', href: '/shop?category=coord-sets' },
+  { label: 'Salwar Set', href: '/shop?category=salwar-sets' },
 ];
 
 export const FOOTER_LINKS = {

@@ -23,7 +23,7 @@ const Shop = () => {
   // Filters
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
 
   const categorySlug = searchParams.get('category');
 

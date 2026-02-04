@@ -36,13 +36,28 @@ const Shop = () => {
     
     // First get category_id if category slug is provided
     let categoryId: string | null = null;
+    let categoryNotFound = false;
+    
     if (categorySlug) {
       const { data: categoryData } = await supabase
         .from('categories')
         .select('id')
         .eq('slug', categorySlug)
         .maybeSingle();
-      categoryId = categoryData?.id || null;
+      
+      if (categoryData) {
+        categoryId = categoryData.id;
+      } else {
+        // Category slug provided but doesn't exist - show no products
+        categoryNotFound = true;
+      }
+    }
+    
+    // If category was requested but not found, show empty results
+    if (categoryNotFound) {
+      setProducts([]);
+      setIsLoading(false);
+      return;
     }
     
     let query = supabase.from('products').select('*');

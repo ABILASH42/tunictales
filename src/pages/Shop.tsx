@@ -25,13 +25,32 @@ const Shop = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
 
+  const categorySlug = searchParams.get('category');
+
   useEffect(() => {
     fetchProducts();
-  }, [sortBy]);
+  }, [sortBy, categorySlug]);
 
   const fetchProducts = async () => {
     setIsLoading(true);
+    
+    // First get category_id if category slug is provided
+    let categoryId: string | null = null;
+    if (categorySlug) {
+      const { data: categoryData } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', categorySlug)
+        .maybeSingle();
+      categoryId = categoryData?.id || null;
+    }
+    
     let query = supabase.from('products').select('*');
+    
+    // Filter by category if provided
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    }
     
     if (searchParams.get('filter') === 'new') {
       query = query.eq('is_new', true);
@@ -78,9 +97,11 @@ const Shop = () => {
         {/* Page Header */}
         <div className="bg-secondary/30 py-12">
           <div className="container-luxe">
-            <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">Shop</h1>
+            <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
+              {categorySlug ? categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, ' ') : 'Shop'}
+            </h1>
             <p className="text-muted-foreground">
-              Discover our curated collection of premium fashion
+              {categorySlug ? `Browse our ${categorySlug.replace(/-/g, ' ')} collection` : 'Discover our curated collection of premium fashion'}
             </p>
           </div>
         </div>

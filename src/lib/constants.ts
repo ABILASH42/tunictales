@@ -59,9 +59,6 @@ export const PRICE_RANGES = [
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Kurta', href: '/shop?category=kurta' },
-  { label: 'Kurta Sets', href: '/shop?category=kurta-sets' },
-  { label: 'Coord Sets', href: '/shop?category=coord-sets' },
-  { label: 'Salwar Sets', href: '/shop?category=salwar-sets' },
 ];
 
 export const FOOTER_LINKS = {

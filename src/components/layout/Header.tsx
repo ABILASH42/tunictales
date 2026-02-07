@@ -44,29 +44,7 @@ export function Header() {
     >
       <div className="container-luxe">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 -ml-2 transition-transform active:scale-95"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <div className="relative w-6 h-6">
-              <Menu 
-                className={cn(
-                  'h-6 w-6 absolute transition-all duration-300',
-                  isMenuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
-                )} 
-              />
-              <X 
-                className={cn(
-                  'h-6 w-6 absolute transition-all duration-300',
-                  isMenuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
-                )} 
-              />
-            </div>
-          </button>
-
-          {/* Logo */}
+          {/* Logo - positioned at far left */}
           <Link to="/" className="flex items-center group">
             <img 
               src={logo} 
@@ -99,6 +77,27 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 md:gap-2">
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 transition-transform active:scale-95"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-6 h-6">
+                <Menu 
+                  className={cn(
+                    'h-6 w-6 absolute transition-all duration-300',
+                    isMenuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
+                  )} 
+                />
+                <X 
+                  className={cn(
+                    'h-6 w-6 absolute transition-all duration-300',
+                    isMenuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
+                  )} 
+                />
+              </div>
+            </button>
             <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
               <Link to="/wishlist">
                 <Heart className="h-5 w-5" />

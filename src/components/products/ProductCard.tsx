@@ -3,6 +3,7 @@ import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product, ProductVariant } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatINR } from '@/lib/currency';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useState, useEffect } from 'react';
@@ -153,11 +154,11 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
           <div className="flex items-center gap-2">
             {product.sale_price ? (
               <>
-                <span className="font-semibold text-primary">₹{product.sale_price.toLocaleString()}</span>
-                <span className="price-original">₹{product.base_price.toLocaleString()}</span>
+                <span className="font-semibold text-primary">{formatINR(product.sale_price)}</span>
+                <span className="price-original">{formatINR(product.base_price)}</span>
               </>
             ) : (
-              <span className="font-semibold">₹{product.base_price.toLocaleString()}</span>
+              <span className="font-semibold">{formatINR(product.base_price)}</span>
             )}
           </div>
         </div>

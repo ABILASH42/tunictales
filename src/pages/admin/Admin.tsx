@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Order, Category } from '@/types';
+import { formatINR } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -171,7 +172,7 @@ const AdminDashboard = () => {
         </div>
         <div className="bg-card border rounded-sm p-6">
           <p className="text-sm text-muted-foreground">Total Revenue</p>
-          <p className="text-3xl font-bold mt-2">₹{stats.totalRevenue.toLocaleString()}</p>
+          <p className="text-3xl font-bold mt-2">{formatINR(stats.totalRevenue)}</p>
         </div>
         <div className="bg-card border rounded-sm p-6">
           <p className="text-sm text-muted-foreground">Pending Orders</p>
@@ -197,7 +198,7 @@ const AdminDashboard = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">₹{Number(order.total).toLocaleString()}</p>
+                  <p className="font-medium">{formatINR(Number(order.total))}</p>
                   <span className={cn(
                     'text-xs px-2 py-1 rounded-full',
                     order.status === 'delivered' ? 'bg-green-100 text-green-800' :
@@ -314,13 +315,13 @@ const AdminProducts = () => {
                     <td className="p-4">
                       {product.sale_price ? (
                         <div>
-                          <span className="font-medium text-destructive">₹{product.sale_price.toLocaleString()}</span>
+                          <span className="font-medium text-destructive">{formatINR(product.sale_price)}</span>
                           <span className="text-sm text-muted-foreground line-through ml-2">
-                            ₹{product.base_price.toLocaleString()}
+                            {formatINR(product.base_price)}
                           </span>
                         </div>
                       ) : (
-                        <span className="font-medium">₹{product.base_price.toLocaleString()}</span>
+                        <span className="font-medium">{formatINR(product.base_price)}</span>
                       )}
                     </td>
                     <td className="p-4">
@@ -439,7 +440,7 @@ const AdminOrders = () => {
                 <tr key={order.id} className="border-b last:border-0">
                   <td className="p-4 font-medium">#{order.order_number}</td>
                   <td className="p-4 text-muted-foreground">{order.user_id?.slice(0, 8)}...</td>
-                  <td className="p-4 font-medium">₹{Number(order.total).toLocaleString()}</td>
+                  <td className="p-4 font-medium">{formatINR(Number(order.total))}</td>
                   <td className="p-4">
                     <select
                       value={order.status}

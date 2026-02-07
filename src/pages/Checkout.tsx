@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { formatINR } from '@/lib/currency';
 import { toast } from 'sonner';
 
 const Checkout = () => {
@@ -198,7 +199,7 @@ const Checkout = () => {
                             <p className="text-sm text-muted-foreground">5-7 business days</p>
                           </Label>
                         </div>
-                        <span className="font-medium">{subtotal > 1000 ? 'Free' : '₹99'}</span>
+                        <span className="font-medium">{subtotal > 1000 ? 'Free' : formatINR(99)}</span>
                       </div>
                       <div className="flex items-center justify-between border rounded-sm p-4 cursor-pointer hover:border-accent mt-2">
                         <div className="flex items-center gap-3">
@@ -208,7 +209,7 @@ const Checkout = () => {
                             <p className="text-sm text-muted-foreground">2-3 business days</p>
                           </Label>
                         </div>
-                        <span className="font-medium">₹149</span>
+                        <span className="font-medium">{formatINR(149)}</span>
                       </div>
                     </RadioGroup>
                   </div>
@@ -281,7 +282,7 @@ const Checkout = () => {
                       Back
                     </Button>
                     <Button type="submit" className="flex-1" size="lg" disabled={isProcessing}>
-                      {isProcessing ? 'Processing...' : `Pay ₹${total.toLocaleString()}`}
+                      {isProcessing ? 'Processing...' : `Pay ${formatINR(total)}`}
                     </Button>
                   </div>
                 </form>
@@ -309,7 +310,7 @@ const Checkout = () => {
                           </p>
                         )}
                         <p className="text-sm mt-1">
-                          ₹{(item.product?.sale_price || item.product?.base_price)?.toLocaleString()} × {item.quantity}
+                          {formatINR(item.product?.sale_price || item.product?.base_price)} × {item.quantity}
                         </p>
                       </div>
                     </div>
@@ -321,15 +322,15 @@ const Checkout = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>₹{subtotal.toLocaleString()}</span>
+                    <span>{formatINR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>{shippingCost === 0 ? 'Free' : `₹${shippingCost.toLocaleString()}`}</span>
+                    <span>{shippingCost === 0 ? 'Free' : formatINR(shippingCost)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>₹{tax.toLocaleString()}</span>
+                    <span>{formatINR(tax)}</span>
                   </div>
                 </div>
 
@@ -337,7 +338,7 @@ const Checkout = () => {
 
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>₹{total.toLocaleString()}</span>
+                  <span>{formatINR(total)}</span>
                 </div>
               </div>
             </div>

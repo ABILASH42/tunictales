@@ -53,51 +53,69 @@ export function Header() {
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => {
-              const isActive = location.pathname === link.href || 
-                (link.href !== '/' && location.pathname.startsWith(link.href.split('?')[0]));
-              return (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={cn(
-                    'text-sm font-medium gold-underline transition-colors',
-                    isActive 
-                      ? 'text-primary' 
-                      : 'text-foreground/70 hover:text-foreground'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Desktop Navigation and Actions */}
+          <div className="hidden lg:flex items-center gap-8">
+            {/* Navigation Links */}
+            <nav className="flex items-center gap-8">
+              {NAV_LINKS.map((link) => {
+                const isActive = location.pathname === link.href || 
+                  (link.href !== '/' && location.pathname.startsWith(link.href.split('?')[0]));
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className={cn(
+                      'text-sm font-medium gold-underline transition-colors',
+                      isActive 
+                        ? 'text-primary' 
+                        : 'text-foreground/70 hover:text-foreground'
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1 md:gap-2">
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 transition-transform active:scale-95"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              <div className="relative w-6 h-6">
-                <Menu 
-                  className={cn(
-                    'h-6 w-6 absolute transition-all duration-300',
-                    isMenuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
-                  )} 
-                />
-                <X 
-                  className={cn(
-                    'h-6 w-6 absolute transition-all duration-300',
-                    isMenuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
-                  )} 
-                />
-              </div>
-            </button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
+                <Link to="/wishlist">
+                  <Heart className="h-5 w-5" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" className="relative hover:text-accent transition-colors" asChild>
+                <Link to="/cart">
+                  <ShoppingBag className="h-5 w-5" />
+                  {itemCount > 0 && (
+                    <span 
+                      className={cn(
+                        'absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium',
+                        cartBounce && 'animate-cart-bounce'
+                      )}
+                    >
+                      {itemCount}
+                    </span>
+                  )}
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
+                <Link to={user ? '/account' : '/auth'}>
+                  <User className="h-5 w-5" />
+                </Link>
+              </Button>
+              {user && (
+                <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
+                  <Link to="/account?tab=orders">
+                    <Package className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile menu button and action buttons */}
+          <div className="flex lg:hidden items-center gap-2">
             <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
               <Link to="/wishlist">
                 <Heart className="h-5 w-5" />
@@ -123,13 +141,26 @@ export function Header() {
                 <User className="h-5 w-5" />
               </Link>
             </Button>
-            {user && (
-              <Button variant="ghost" size="icon" asChild className="hidden md:flex hover:text-accent transition-colors">
-                <Link to="/account?tab=orders">
-                  <Package className="h-5 w-5" />
-                </Link>
-              </Button>
-            )}
+            <button
+              className="p-2 transition-transform active:scale-95"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-6 h-6">
+                <Menu 
+                  className={cn(
+                    'h-6 w-6 absolute transition-all duration-300',
+                    isMenuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
+                  )} 
+                />
+                <X 
+                  className={cn(
+                    'h-6 w-6 absolute transition-all duration-300',
+                    isMenuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
+                  )} 
+                />
+              </div>
+            </button>
           </div>
         </div>
 

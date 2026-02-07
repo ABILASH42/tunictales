@@ -1,13 +1,13 @@
 /**
  * Format a number as Indian Rupees
- * Uses Unicode escape sequence for rupee symbol to ensure compatibility
+ * Uses "Rs." prefix for maximum compatibility
  */
 export function formatINR(amount: number | null | undefined): string {
-  if (amount === null || amount === undefined) return '\u20B9 0';
-  return `\u20B9${amount.toLocaleString('en-IN')}`;
+  if (amount === null || amount === undefined) return 'Rs. 0';
+  return `Rs. ${amount.toLocaleString('en-IN')}`;
 }
 
 /**
- * Rupee symbol as Unicode escape (works in all fonts)
+ * Rupee prefix
  */
-export const RUPEE = '\u20B9';
+export const RUPEE = 'Rs.';

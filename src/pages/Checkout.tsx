@@ -23,14 +23,10 @@ const Checkout = () => {
   
   // Shipping info
   const [shippingInfo, setShippingInfo] = useState({
-    fullName: profile?.full_name || '',
-    email: profile?.email || '',
-    phone: '',
+    name: profile?.full_name || '',
     address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'US',
+    phone: '',
+    pincode: '',
   });
   
   const [shippingMethod, setShippingMethod] = useState('standard');
@@ -145,32 +141,13 @@ const Checkout = () => {
                     </h2>
 
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
-                        <Input
-                          id="fullName"
-                          value={shippingInfo.fullName}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={shippingInfo.email}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-                          required
-                        />
-                      </div>
                       <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="phone">Phone</Label>
+                        <Label htmlFor="name">Name</Label>
                         <Input
-                          id="phone"
-                          type="tel"
-                          value={shippingInfo.phone}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
+                          id="name"
+                          placeholder="Enter your full name"
+                          value={shippingInfo.name}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, name: e.target.value })}
                           required
                         />
                       </div>
@@ -178,44 +155,30 @@ const Checkout = () => {
                         <Label htmlFor="address">Address</Label>
                         <Input
                           id="address"
+                          placeholder="Enter your full address"
                           value={shippingInfo.address}
                           onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
+                        <Label htmlFor="phone">Phone No</Label>
                         <Input
-                          id="city"
-                          value={shippingInfo.city}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
+                          id="phone"
+                          type="tel"
+                          placeholder="Enter your phone number"
+                          value={shippingInfo.phone}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="state">State</Label>
+                        <Label htmlFor="pincode">Pincode</Label>
                         <Input
-                          id="state"
-                          value={shippingInfo.state}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="postalCode">Postal Code</Label>
-                        <Input
-                          id="postalCode"
-                          value={shippingInfo.postalCode}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, postalCode: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
-                        <Input
-                          id="country"
-                          value={shippingInfo.country}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, country: e.target.value })}
+                          id="pincode"
+                          placeholder="Enter your pincode"
+                          value={shippingInfo.pincode}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, pincode: e.target.value })}
                           required
                         />
                       </div>

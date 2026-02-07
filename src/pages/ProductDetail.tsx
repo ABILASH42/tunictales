@@ -253,14 +253,14 @@ const ProductDetail = () => {
                 <div className="flex items-center gap-3">
                   {product.sale_price ? (
                     <>
-                      <span className="text-2xl font-bold text-destructive">${product.sale_price}</span>
-                      <span className="text-lg text-muted-foreground line-through">${product.base_price}</span>
+                      <span className="text-2xl font-bold text-destructive">₹{product.sale_price.toLocaleString()}</span>
+                      <span className="text-lg text-muted-foreground line-through">₹{product.base_price.toLocaleString()}</span>
                       <span className="badge-sale">
                         Save {Math.round((1 - product.sale_price / product.base_price) * 100)}%
                       </span>
                     </>
                   ) : (
-                    <span className="text-2xl font-bold">${product.base_price}</span>
+                    <span className="text-2xl font-bold">₹{product.base_price.toLocaleString()}</span>
                   )}
                 </div>
               </div>

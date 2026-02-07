@@ -13,7 +13,7 @@ const Cart = () => {
   const { user } = useAuth();
   const [couponCode, setCouponCode] = useState('');
 
-  const shipping = subtotal > 100 ? 0 : 9.99;
+  const shipping = subtotal > 1000 ? 0 : 99;
   const total = subtotal + shipping;
 
   if (!user) {
@@ -86,7 +86,7 @@ const Cart = () => {
                       </p>
                     )}
                     <p className="font-medium mt-2">
-                      ${item.product?.sale_price || item.product?.base_price}
+                      ₹{(item.product?.sale_price || item.product?.base_price)?.toLocaleString()}
                     </p>
                     
                     <div className="flex items-center justify-between mt-4">
@@ -126,15 +126,15 @@ const Cart = () => {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    <span>{shipping === 0 ? 'Free' : `₹${shipping.toLocaleString()}`}</span>
                   </div>
                   {shipping > 0 && (
                     <p className="text-xs text-accent">
-                      Add ${(100 - subtotal).toFixed(2)} more for free shipping
+                      Add ₹{(1000 - subtotal).toLocaleString()} more for free shipping
                     </p>
                   )}
                 </div>
@@ -153,7 +153,7 @@ const Cart = () => {
                 
                 <div className="flex justify-between font-semibold text-lg mb-6">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toLocaleString()}</span>
                 </div>
                 
                 <Button className="w-full" size="lg" asChild>

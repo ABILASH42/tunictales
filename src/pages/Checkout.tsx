@@ -31,8 +31,8 @@ const Checkout = () => {
   
   const [shippingMethod, setShippingMethod] = useState('standard');
   
-  const shippingCost = shippingMethod === 'express' ? 14.99 : subtotal > 100 ? 0 : 9.99;
-  const tax = subtotal * 0.08;
+  const shippingCost = shippingMethod === 'express' ? 149 : subtotal > 1000 ? 0 : 99;
+  const tax = subtotal * 0.05; // 5% GST
   const total = subtotal + shippingCost + tax;
 
   if (!user) {
@@ -198,7 +198,7 @@ const Checkout = () => {
                             <p className="text-sm text-muted-foreground">5-7 business days</p>
                           </Label>
                         </div>
-                        <span className="font-medium">{subtotal > 100 ? 'Free' : '$9.99'}</span>
+                        <span className="font-medium">{subtotal > 1000 ? 'Free' : '₹99'}</span>
                       </div>
                       <div className="flex items-center justify-between border rounded-sm p-4 cursor-pointer hover:border-accent mt-2">
                         <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ const Checkout = () => {
                             <p className="text-sm text-muted-foreground">2-3 business days</p>
                           </Label>
                         </div>
-                        <span className="font-medium">$14.99</span>
+                        <span className="font-medium">₹149</span>
                       </div>
                     </RadioGroup>
                   </div>
@@ -281,7 +281,7 @@ const Checkout = () => {
                       Back
                     </Button>
                     <Button type="submit" className="flex-1" size="lg" disabled={isProcessing}>
-                      {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                      {isProcessing ? 'Processing...' : `Pay ₹${total.toLocaleString()}`}
                     </Button>
                   </div>
                 </form>
@@ -309,7 +309,7 @@ const Checkout = () => {
                           </p>
                         )}
                         <p className="text-sm mt-1">
-                          ${item.product?.sale_price || item.product?.base_price} × {item.quantity}
+                          ₹{(item.product?.sale_price || item.product?.base_price)?.toLocaleString()} × {item.quantity}
                         </p>
                       </div>
                     </div>
@@ -321,15 +321,15 @@ const Checkout = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span>
+                    <span>{shippingCost === 0 ? 'Free' : `₹${shippingCost.toLocaleString()}`}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -337,7 +337,7 @@ const Checkout = () => {
 
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toLocaleString()}</span>
                 </div>
               </div>
             </div>

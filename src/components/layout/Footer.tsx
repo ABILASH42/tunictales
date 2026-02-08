@@ -3,10 +3,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FOOTER_LINKS } from '@/lib/constants';
 import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import logo from '@/assets/logo.png';
+import { cn } from '@/lib/utils';
 
-export function Footer() {
+export const Footer = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -20,7 +21,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer ref={ref} {...props} className={cn("bg-primary text-primary-foreground", props.className)}>
       {/* Main Footer */}
       <div className="container-luxe py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
@@ -149,4 +150,6 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});
+
+Footer.displayName = 'Footer';

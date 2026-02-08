@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Heart, User, Menu, X, Package } from 'lucide-react';
+import { ShoppingBag, Heart, User, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -104,13 +104,6 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Link>
               </Button>
-              {user && (
-                <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
-                  <Link to="/account?tab=orders">
-                    <Package className="h-5 w-5" />
-                  </Link>
-                </Button>
-              )}
             </div>
           </div>
 
@@ -191,18 +184,9 @@ export function Header() {
             })}
             <div className="border-t border-border my-2" />
             <Link
-              to={user ? '/account?tab=orders' : '/auth'}
-              className="py-3 px-4 rounded-lg text-foreground/80 hover:text-foreground hover:bg-secondary/50 transition-all flex items-center gap-3 animate-fade-in"
-              style={{ animationDelay: '250ms' }}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Package className="h-5 w-5" />
-              Orders
-            </Link>
-            <Link
               to={user ? '/account' : '/auth'}
               className="py-3 px-4 rounded-lg text-foreground/80 hover:text-foreground hover:bg-secondary/50 transition-all flex items-center gap-3 animate-fade-in"
-              style={{ animationDelay: '300ms' }}
+              style={{ animationDelay: '250ms' }}
               onClick={() => setIsMenuOpen(false)}
             >
               <User className="h-5 w-5" />

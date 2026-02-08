@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Heart, User, Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -8,7 +8,7 @@ import { NAV_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
 
-export function Header() {
+export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
@@ -35,11 +35,14 @@ export function Header() {
 
   return (
     <header 
+      ref={ref}
+      {...props}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         isScrolled 
           ? 'glass border-b border-border/50 shadow-sm' 
-          : 'bg-transparent'
+          : 'bg-transparent',
+        props.className
       )}
     >
       <div className="container-luxe">
@@ -197,4 +200,6 @@ export function Header() {
       </div>
     </header>
   );
-}
+});
+
+Header.displayName = 'Header';

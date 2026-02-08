@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Heart, Minus, Plus, Star, Truck, RotateCcw, Shield } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Minus, Plus, Star, Truck, Award, BadgeCheck } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -379,12 +379,12 @@ const ProductDetail = () => {
                   <span className="text-xs text-muted-foreground">Free Shipping</span>
                 </div>
                 <div className="text-center">
-                  <RotateCcw className="h-6 w-6 mx-auto mb-2 text-accent" />
-                  <span className="text-xs text-muted-foreground">30-Day Returns</span>
+                  <Award className="h-6 w-6 mx-auto mb-2 text-accent" />
+                  <span className="text-xs text-muted-foreground">Premium Quality</span>
                 </div>
                 <div className="text-center">
-                  <Shield className="h-6 w-6 mx-auto mb-2 text-accent" />
-                  <span className="text-xs text-muted-foreground">2-Year Warranty</span>
+                  <BadgeCheck className="h-6 w-6 mx-auto mb-2 text-accent" />
+                  <span className="text-xs text-muted-foreground">100% Authentic</span>
                 </div>
               </div>
             </div>

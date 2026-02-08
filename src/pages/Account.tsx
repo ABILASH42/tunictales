@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Order, Address } from '@/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { formatINR } from '@/lib/currency';
 
 const Account = () => {
   const navigate = useNavigate();
@@ -157,7 +158,7 @@ const Account = () => {
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium">${order.total}</p>
+                            <p className="font-medium">{formatINR(order.total)}</p>
                             <span className={cn(
                               'text-xs px-2 py-1 rounded-full',
                               order.status === 'delivered' ? 'bg-success/10 text-success' :

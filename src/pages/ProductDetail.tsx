@@ -63,9 +63,9 @@ const ProductDetail = () => {
         }
       }
       
-      // Fetch reviews
+      // Fetch reviews from the public view (excludes user_id for privacy)
       const { data: reviewData } = await supabase
-        .from('reviews')
+        .from('reviews_public')
         .select('*')
         .eq('product_id', productData.id)
         .order('created_at', { ascending: false });

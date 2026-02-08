@@ -65,14 +65,25 @@ export interface WishlistItem {
 
 export interface Review {
   id: string;
-  user_id: string;
+  user_id?: string; // Optional - not included in public view
   product_id: string;
   rating: number;
   title: string | null;
   content: string | null;
-  is_verified_purchase: boolean;
-  created_at: string;
+  is_verified_purchase: boolean | null;
+  created_at: string | null;
   profile?: Profile;
+}
+
+// Public review view (without user_id for privacy)
+export interface ReviewPublic {
+  id: string;
+  product_id: string;
+  rating: number;
+  title: string | null;
+  content: string | null;
+  is_verified_purchase: boolean | null;
+  created_at: string | null;
 }
 
 export interface Order {

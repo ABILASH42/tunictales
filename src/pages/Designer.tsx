@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -48,6 +49,7 @@ const Designer = () => {
   const [fontFamily, setFontFamily] = useState('Arial');
   const [textColor, setTextColor] = useState('#000000');
   const [designName, setDesignName] = useState('My Custom Design');
+  const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -138,25 +140,82 @@ const Designer = () => {
     toast.success('Canvas cleared');
   };
 
-  const saveDesign = () => {
+  const saveDesign = async () => {
     if (!fabricCanvas) return;
     
     const designData = fabricCanvas.toJSON();
-    const previewUrl = fabricCanvas.toDataURL({ multiplier: 1, format: 'png' });
+    const previewDataUrl = fabricCanvas.toDataURL({ multiplier: 1, format: 'png' });
     
-    // For now, save to localStorage (would save to Supabase in production)
-    const designs = JSON.parse(localStorage.getItem('customDesigns') || '[]');
-    designs.push({
-      id: Date.now(),
-      name: designName,
-      data: designData,
-      preview: previewUrl,
-      tshirtColor,
-      createdAt: new Date().toISOString(),
-    });
-    localStorage.setItem('customDesigns', JSON.stringify(designs));
-    
-    toast.success('Design saved!');
+    // For authenticated users, save to database
+    if (user) {
+      setIsSaving(true);
+      try {
+        // Upload preview image to storage (organized by user ID)
+        const fileName = `${user.id}/${Date.now()}-preview.png`;
+        const base64Data = previewDataUrl.split(',')[1];
+        const binaryData = atob(base64Data);
+        const bytes = new Uint8Array(binaryData.length);
+        for (let i = 0; i < binaryData.length; i++) {
+          bytes[i] = binaryData.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: 'image/png' });
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('custom-designs')
+          .upload(fileName, blob, {
+            contentType: 'image/png',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw new Error('Failed to upload preview image');
+        }
+
+        // Get signed URL for the uploaded image
+        const { data: signedUrlData } = await supabase.storage
+          .from('custom-designs')
+          .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year expiry
+
+        const previewUrl = signedUrlData?.signedUrl || null;
+
+        // Save design to database
+        const { error: dbError } = await supabase
+          .from('custom_designs')
+          .insert({
+            user_id: user.id,
+            name: designName.trim() || 'Untitled Design',
+            design_data: designData,
+            preview_url: previewUrl,
+          });
+
+        if (dbError) {
+          console.error('Database error:', dbError);
+          throw new Error('Failed to save design');
+        }
+
+        toast.success('Design saved to your account!');
+      } catch (error) {
+        console.error('Save error:', error);
+        toast.error(error instanceof Error ? error.message : 'Failed to save design');
+      } finally {
+        setIsSaving(false);
+      }
+    } else {
+      // For guests, save to localStorage as temporary storage
+      const designs = JSON.parse(localStorage.getItem('customDesigns') || '[]');
+      designs.push({
+        id: Date.now(),
+        name: designName,
+        data: designData,
+        preview: previewDataUrl,
+        tshirtColor,
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem('customDesigns', JSON.stringify(designs));
+      
+      toast.success('Design saved locally! Sign in to save permanently.');
+    }
   };
 
   const downloadDesign = () => {
@@ -203,6 +262,7 @@ const Designer = () => {
                     value={designName}
                     onChange={(e) => setDesignName(e.target.value)}
                     placeholder="My Custom Design"
+                    maxLength={100}
                   />
                 </div>
 
@@ -226,6 +286,7 @@ const Designer = () => {
                         onChange={(e) => setTextInput(e.target.value)}
                         placeholder="Your text here"
                         onKeyDown={(e) => e.key === 'Enter' && addText()}
+                        maxLength={200}
                       />
                     </div>
 
@@ -374,9 +435,9 @@ const Designer = () => {
 
               {/* Actions */}
               <div className="flex flex-wrap gap-4 mt-6 justify-center">
-                <Button variant="outline" onClick={saveDesign}>
+                <Button variant="outline" onClick={saveDesign} disabled={isSaving}>
                   <Save className="h-4 w-4 mr-2" />
-                  Save Design
+                  {isSaving ? 'Saving...' : 'Save Design'}
                 </Button>
                 <Button variant="outline" onClick={downloadDesign}>
                   <Download className="h-4 w-4 mr-2" />
@@ -390,6 +451,11 @@ const Designer = () => {
 
               <p className="text-center text-sm text-muted-foreground mt-4">
                 Base price: $24.99 + $5.00 customization fee
+                {!user && (
+                  <span className="block mt-1 text-accent">
+                    Sign in to save designs to your account
+                  </span>
+                )}
               </p>
             </div>
           </div>

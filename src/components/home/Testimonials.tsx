@@ -25,7 +25,7 @@ const testimonials = [
     id: 3,
     name: 'Meera Krishnan',
     location: 'Bangalore',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
     rating: 5,
     text: "Finally found a brand that understands modern Indian women! The designs are contemporary yet rooted in tradition. The customer service was also exceptional.",
     product: 'Pearl White Chikankari Kurta',

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,18 +12,63 @@ serve(async (req) => {
   }
 
   try {
+    // Authentication check
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('Missing or invalid authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: userData, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !userData?.user) {
+      console.error('Authentication failed:', authError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Authenticated user:', userData.user.id);
+
+    // Parse and validate input
     const { prompt } = await req.json();
+    
+    if (!prompt || typeof prompt !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Prompt is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (prompt.length > 1000) {
+      return new Response(
+        JSON.stringify({ error: 'Prompt too long (max 1000 characters)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize input
+    const cleanPrompt = prompt.trim();
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    if (!prompt) {
-      throw new Error('Prompt is required');
-    }
-
-    console.log('Generating image with prompt:', prompt);
+    console.log('Generating image for user:', userData.user.id, 'Prompt length:', cleanPrompt.length);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -35,7 +81,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'user',
-            content: prompt
+            content: cleanPrompt
           }
         ],
         modalities: ['image', 'text']
@@ -63,7 +109,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Image generation response received');
+    console.log('Image generation response received for user:', userData.user.id);
     
     const message = data.choices?.[0]?.message;
     const imageUrl = message?.images?.[0]?.image_url?.url;

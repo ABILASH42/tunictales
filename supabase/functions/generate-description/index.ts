@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,12 +12,71 @@ serve(async (req) => {
   }
 
   try {
+    // Authentication check
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('Missing or invalid authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: userData, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !userData?.user) {
+      console.error('Authentication failed:', authError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Authenticated user:', userData.user.id);
+
+    // Parse and validate input
     const { productName, category } = await req.json();
+    
+    if (!productName || typeof productName !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Product name is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (productName.length > 200) {
+      return new Response(
+        JSON.stringify({ error: 'Product name too long (max 200 characters)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (category && (typeof category !== 'string' || category.length > 100)) {
+      return new Response(
+        JSON.stringify({ error: 'Category must be a string under 100 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize inputs
+    const cleanProductName = productName.trim().replace(/[<>]/g, '');
+    const cleanCategory = category ? category.trim().replace(/[<>]/g, '') : '';
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
+
+    console.log('Generating description for:', cleanProductName, 'User:', userData.user.id);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -33,7 +93,7 @@ serve(async (req) => {
           },
           {
             role: 'user',
-            content: `Generate a product description for: "${productName}"${category ? ` in the category: ${category}` : ''}.
+            content: `Generate a product description for: "${cleanProductName}"${cleanCategory ? ` in the category: ${cleanCategory}` : ''}.
             
 Return a JSON object with exactly these fields:
 {
@@ -82,6 +142,8 @@ Return a JSON object with exactly these fields:
         fullDescription: content
       };
     }
+
+    console.log('Description generated successfully for user:', userData.user.id);
 
     return new Response(
       JSON.stringify(parsed),

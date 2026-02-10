@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Heart, User, Menu, X } from 'lucide-react';
+import { ShoppingBag, Heart, User, Menu, X, Shield } from 'lucide-react';
 import { useState, useEffect, forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,7 +12,7 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const location = useLocation();
 
@@ -107,6 +107,13 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
                   <User className="h-5 w-5" />
                 </Link>
               </Button>
+              {isAdmin && (
+                <Button variant="ghost" size="icon" asChild className="hover:text-accent transition-colors">
+                  <Link to="/admin">
+                    <Shield className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
 
@@ -195,6 +202,17 @@ export const Header = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
               <User className="h-5 w-5" />
               Account
             </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="py-3 px-4 rounded-lg text-foreground/80 hover:text-foreground hover:bg-secondary/50 transition-all flex items-center gap-3 animate-fade-in"
+                style={{ animationDelay: '300ms' }}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Shield className="h-5 w-5" />
+                Admin Panel
+              </Link>
+            )}
           </nav>
         </div>
       </div>

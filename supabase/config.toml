@@ -1,13 +1,20 @@
 project_id = "qlkynjaxufzckjbgvhtd"
 
+[auth]
+site_url = "https://tunictales.lovable.app"
+
 [auth.email]
 [auth.email.template.confirmation]
 subject = "Welcome to Tunic Tales - Verify Your Email"
-content_path = "./supabase/templates/confirmation.html"
+content_path = "./templates/confirmation.html"
 
 [auth.email.template.recovery]
 subject = "Tunic Tales - Reset Your Password"
-content_path = "./supabase/templates/recovery.html"
+content_path = "./templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Tunic Tales - Your Magic Link"
+content_path = "./templates/confirmation.html"
 
 [functions.generate-description]
 verify_jwt = false

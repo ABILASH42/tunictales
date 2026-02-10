@@ -19,6 +19,7 @@ import Checkout from "./pages/Checkout";
 import { AdminLayout, AdminDashboard, AdminProducts, AdminOrders } from "./pages/admin/Admin";
 import AdminProductStock from "./pages/admin/AdminProductStock";
 import AdminBanners from "./pages/admin/AdminBanners";
+import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path="products" element={<AdminProducts />} />
+                  <Route path="products/:productId" element={<AdminProductEdit />} />
                   <Route path="products/:productId/stock" element={<AdminProductStock />} />
                   <Route path="orders" element={<AdminOrders />} />
                   <Route path="banners" element={<AdminBanners />} />

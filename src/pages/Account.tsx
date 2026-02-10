@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Package, Heart, MapPin, LogOut, Settings, Eye, EyeOff } from 'lucide-react';
+import { User, Package, Heart, MapPin, LogOut, Settings, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -87,6 +87,77 @@ const ChangePasswordSection = () => {
           {isChanging ? 'Changing...' : 'Change Password'}
         </Button>
       </form>
+    </div>
+  );
+};
+
+const DeleteAccountSection = ({ onDeleted }: { onDeleted: () => void }) => {
+  const [confirmText, setConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleDelete = async () => {
+    if (confirmText !== 'DELETE') {
+      toast.error('Please type DELETE to confirm');
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await supabase.functions.invoke('delete-account', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (res.error) throw res.error;
+
+      toast.success('Account deleted successfully');
+      onDeleted();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete account');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <div className="border-t pt-6">
+      <h3 className="font-display text-lg font-semibold mb-2 text-destructive flex items-center gap-2">
+        <AlertTriangle className="h-5 w-5" />
+        Delete Account
+      </h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        This action is permanent and cannot be undone. All your data, orders, and saved information will be deleted.
+      </p>
+
+      {!showConfirm ? (
+        <Button variant="destructive" onClick={() => setShowConfirm(true)}>
+          Delete My Account
+        </Button>
+      ) : (
+        <div className="space-y-3 border border-destructive/30 rounded-sm p-4 bg-destructive/5">
+          <p className="text-sm font-medium">Type <strong>DELETE</strong> to confirm:</p>
+          <Input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Type DELETE"
+          />
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting || confirmText !== 'DELETE'}
+            >
+              {isDeleting ? 'Deleting...' : 'Permanently Delete Account'}
+            </Button>
+            <Button variant="outline" onClick={() => { setShowConfirm(false); setConfirmText(''); }}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -346,6 +417,9 @@ const Account = () => {
 
                 {/* Change Password Section */}
                 <ChangePasswordSection />
+
+                {/* Delete Account Section */}
+                <DeleteAccountSection onDeleted={() => { signOut(); navigate('/'); }} />
               </div>
             </TabsContent>
           </Tabs>

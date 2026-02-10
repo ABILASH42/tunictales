@@ -340,6 +340,19 @@
   .text-gold { color: hsl(var(--gold)); }
 }
 
+/* Hero drift animation */
+@keyframes hero-drift {
+  0% { transform: scale(1.05) translate(0%, 0%); }
+  25% { transform: scale(1.1) translate(-1%, -0.5%); }
+  50% { transform: scale(1.08) translate(0.5%, -1%); }
+  75% { transform: scale(1.12) translate(-0.5%, 0.5%); }
+  100% { transform: scale(1.05) translate(0%, 0%); }
+}
+
+.animate-hero-drift {
+  animation: hero-drift 20s ease-in-out infinite;
+}
+
 /* Custom animations */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }

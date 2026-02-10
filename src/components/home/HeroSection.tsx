@@ -11,7 +11,7 @@ export function HeroSection() {
         <img
           src={heroImage}
           alt="Tunic Tales - Premium Indian Ethnic Wear"
-          className="w-full h-full object-cover object-top animate-hero-drift"
+          className="w-full h-full object-cover object-top animate-hero-reveal"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />

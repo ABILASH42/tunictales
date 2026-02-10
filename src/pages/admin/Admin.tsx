@@ -377,8 +377,9 @@ const AdminProducts = () => {
 
 // Orders Page
 const AdminOrders = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -391,7 +392,7 @@ const AdminOrders = () => {
       .select('*')
       .order('created_at', { ascending: false });
     
-    if (data) setOrders(data as unknown as Order[]);
+    if (data) setOrders(data);
     setIsLoading(false);
   };
 
@@ -409,6 +410,12 @@ const AdminOrders = () => {
     }
   };
 
+  const getShippingAddress = (order: any) => {
+    const addr = order.shipping_address;
+    if (!addr) return null;
+    return typeof addr === 'string' ? JSON.parse(addr) : addr;
+  };
+
   return (
     <div className="bg-card border rounded-sm">
       <div className="overflow-x-auto">
@@ -417,7 +424,8 @@ const AdminOrders = () => {
             <tr>
               <th className="text-left p-4">Order</th>
               <th className="text-left p-4">Customer</th>
-              <th className="text-left p-4">Total</th>
+              <th className="text-left p-4">Amount</th>
+              <th className="text-left p-4">Payment</th>
               <th className="text-left p-4">Status</th>
               <th className="text-left p-4">Date</th>
             </tr>
@@ -425,40 +433,103 @@ const AdminOrders = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                <td colSpan={6} className="p-8 text-center text-muted-foreground">
                   Loading...
                 </td>
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                <td colSpan={6} className="p-8 text-center text-muted-foreground">
                   No orders yet
                 </td>
               </tr>
             ) : (
-              orders.map(order => (
-                <tr key={order.id} className="border-b last:border-0">
-                  <td className="p-4 font-medium">#{order.order_number}</td>
-                  <td className="p-4 text-muted-foreground">{order.user_id?.slice(0, 8)}...</td>
-                  <td className="p-4 font-medium">{formatINR(Number(order.total))}</td>
-                  <td className="p-4">
-                    <select
-                      value={order.status}
-                      onChange={(e) => updateStatus(order.id, e.target.value)}
-                      className="border rounded px-2 py-1 text-sm"
+              orders.map(order => {
+                const addr = getShippingAddress(order);
+                const isExpanded = expandedOrder === order.id;
+                return (
+                  <>
+                    <tr
+                      key={order.id}
+                      className="border-b last:border-0 cursor-pointer hover:bg-muted/30"
+                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
                     >
-                      <option value="pending">Pending</option>
-                      <option value="processing">Processing</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="delivered">Delivered</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </td>
-                  <td className="p-4 text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
+                      <td className="p-4 font-medium">#{order.order_number}</td>
+                      <td className="p-4">
+                        <p className="font-medium">{addr?.name || '—'}</p>
+                        <p className="text-xs text-muted-foreground">{addr?.phone || ''}</p>
+                      </td>
+                      <td className="p-4">
+                        <p className="font-medium">{formatINR(Number(order.total))}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Subtotal: {formatINR(Number(order.subtotal))}
+                        </p>
+                      </td>
+                      <td className="p-4">
+                        <span className={cn(
+                          'text-xs px-2 py-1 rounded-full',
+                          order.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                          order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        )}>
+                          {order.payment_status || 'pending'}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <select
+                          value={order.status}
+                          onChange={(e) => { e.stopPropagation(); updateStatus(order.id, e.target.value); }}
+                          className="border rounded px-2 py-1 text-sm bg-background"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr key={`${order.id}-details`} className="border-b bg-muted/20">
+                        <td colSpan={6} className="p-4">
+                          <div className="grid md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <h4 className="font-semibold mb-1">Shipping Address</h4>
+                              {addr ? (
+                                <>
+                                  <p>{addr.name}</p>
+                                  <p>{addr.address}</p>
+                                  <p>Pincode: {addr.pincode}</p>
+                                  <p>Phone: {addr.phone}</p>
+                                </>
+                              ) : (
+                                <p className="text-muted-foreground">No address provided</p>
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-semibold mb-1">Payment Details</h4>
+                              <p>Status: <span className="capitalize">{order.payment_status || 'pending'}</span></p>
+                              <p>Subtotal: {formatINR(Number(order.subtotal))}</p>
+                              <p>Shipping: {formatINR(Number(order.shipping_amount || 0))}</p>
+                              <p>Tax: {formatINR(Number(order.tax_amount || 0))}</p>
+                              <p className="font-semibold mt-1">Total: {formatINR(Number(order.total))}</p>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold mb-1">Order Info</h4>
+                              <p>Order #: {order.order_number}</p>
+                              <p>Placed: {new Date(order.created_at).toLocaleString()}</p>
+                              {order.notes && <p className="mt-1">Notes: {order.notes}</p>}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                );
+              })
             )}
           </tbody>
         </table>

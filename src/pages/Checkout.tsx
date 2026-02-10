@@ -221,71 +221,26 @@ const Checkout = () => {
               )}
 
               {step === 2 && (
-                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                <div className="space-y-6">
                   <div>
                     <h2 className="font-display text-xl font-semibold mb-4 flex items-center gap-2">
                       <CreditCard className="h-5 w-5" />
-                      Payment Information
+                      Payment
                     </h2>
 
-                    <div className="bg-muted/50 border rounded-sm p-6 mb-6">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                        <Lock className="h-4 w-4" />
-                        Secure payment - Your data is encrypted
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="cardNumber">Card Number</Label>
-                          <Input
-                            id="cardNumber"
-                            placeholder="1234 5678 9012 3456"
-                            required
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="expiry">Expiry Date</Label>
-                            <Input
-                              id="expiry"
-                              placeholder="MM/YY"
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="cvc">CVC</Label>
-                            <Input
-                              id="cvc"
-                              placeholder="123"
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cardName">Name on Card</Label>
-                          <Input
-                            id="cardName"
-                            placeholder="John Doe"
-                            required
-                          />
-                        </div>
-                      </div>
+                    <div className="bg-muted/50 border rounded-sm p-8 text-center">
+                      <Lock className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="font-display text-lg font-semibold mb-2">Payment Gateway Coming Soon</h3>
+                      <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                        We're integrating a secure payment gateway. Online ordering will be available shortly. Thank you for your patience!
+                      </p>
                     </div>
-
-                    <p className="text-xs text-muted-foreground text-center">
-                      This is a demo checkout. No real payment will be processed.
-                    </p>
                   </div>
 
-                  <div className="flex gap-4">
-                    <Button type="button" variant="outline" onClick={() => setStep(1)} className="flex-1">
-                      Back
-                    </Button>
-                    <Button type="submit" className="flex-1" size="lg" disabled={isProcessing}>
-                      {isProcessing ? 'Processing...' : `Pay ${formatINR(total)}`}
-                    </Button>
-                  </div>
-                </form>
+                  <Button type="button" variant="outline" onClick={() => setStep(1)} className="w-full">
+                    Back to Shipping
+                  </Button>
+                </div>
               )}
             </div>
 

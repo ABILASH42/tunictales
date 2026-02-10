@@ -22,6 +22,7 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminSettings from "./pages/admin/AdminSettings";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="/account" element={<Account />} />
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/designer" element={<Designer />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminLayout />}>

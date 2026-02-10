@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Package, Heart, MapPin, LogOut, Settings } from 'lucide-react';
+import { User, Package, Heart, MapPin, LogOut, Settings, Eye, EyeOff } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,81 @@ import { Order, Address } from '@/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { formatINR } from '@/lib/currency';
+
+const ChangePasswordSection = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setIsChanging(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Password changed successfully!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+    setIsChanging(false);
+  };
+
+  return (
+    <div className="border-t pt-6">
+      <h3 className="font-display text-lg font-semibold mb-4">Change Password</h3>
+      <form onSubmit={handleChangePassword} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="new-pw">New Password</Label>
+          <div className="relative">
+            <Input
+              id="new-pw"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-pw">Confirm New Password</Label>
+          <Input
+            id="confirm-pw"
+            type="password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+        <Button type="submit" variant="outline" disabled={isChanging}>
+          {isChanging ? 'Changing...' : 'Change Password'}
+        </Button>
+      </form>
+    </div>
+  );
+};
 
 const Account = () => {
   const navigate = useNavigate();
@@ -268,6 +343,9 @@ const Account = () => {
                     {isSaving ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </form>
+
+                {/* Change Password Section */}
+                <ChangePasswordSection />
               </div>
             </TabsContent>
           </Tabs>

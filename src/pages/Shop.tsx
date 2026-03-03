@@ -21,8 +21,6 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState('newest');
   
   // Filters
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
 
   const categorySlug = searchParams.get('category');
@@ -100,9 +98,7 @@ const Shop = () => {
   };
 
   const clearFilters = () => {
-    setSelectedSizes([]);
-    setSelectedColors([]);
-    setPriceRange([0, 1000]);
+    setPriceRange([0, 50000]);
   };
 
   return (
@@ -126,11 +122,7 @@ const Shop = () => {
             {/* Desktop Filters */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <ProductFilters
-                selectedSizes={selectedSizes}
-                selectedColors={selectedColors}
                 priceRange={priceRange}
-                onSizesChange={setSelectedSizes}
-                onColorsChange={setSelectedColors}
                 onPriceChange={setPriceRange}
                 onClearFilters={clearFilters}
               />
@@ -155,11 +147,7 @@ const Shop = () => {
                       </SheetHeader>
                       <div className="mt-6">
                         <ProductFilters
-                          selectedSizes={selectedSizes}
-                          selectedColors={selectedColors}
                           priceRange={priceRange}
-                          onSizesChange={setSelectedSizes}
-                          onColorsChange={setSelectedColors}
                           onPriceChange={setPriceRange}
                           onClearFilters={clearFilters}
                         />

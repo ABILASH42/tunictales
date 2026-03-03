@@ -15,13 +15,15 @@ import { cn } from '@/lib/utils';
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState<Product[]>([]);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   
   // Filters
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const categorySlug = searchParams.get('category');
 
@@ -53,7 +55,7 @@ const Shop = () => {
     
     // If category was requested but not found, show empty results
     if (categoryNotFound) {
-      setProducts([]);
+      setAllProducts([]);
       setIsLoading(false);
       return;
     }
@@ -85,19 +87,46 @@ const Shop = () => {
     
     const { data } = await query;
     
-    let filteredProducts = (data as Product[]) || [];
-    
-    // Client-side filtering for price
-    filteredProducts = filteredProducts.filter(p => {
-      const price = p.sale_price || p.base_price;
-      return price >= priceRange[0] && price <= priceRange[1];
-    });
-    
-    setProducts(filteredProducts);
+    setAllProducts((data as Product[]) || []);
     setIsLoading(false);
   };
 
+  // Client-side filtering for price and size
+  const filteredProducts = allProducts.filter(p => {
+    const price = p.sale_price || p.base_price;
+    if (price < priceRange[0] || price > priceRange[1]) return false;
+    // Size filtering would require checking variants, but we filter by style_tags or skip if no sizes selected
+    return true;
+  });
+
+  // For size filtering, we need to check product_variants
+  const [sizeFilteredIds, setSizeFilteredIds] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    if (selectedSizes.length === 0) {
+      setSizeFilteredIds(null);
+      return;
+    }
+    const fetchVariantsBySize = async () => {
+      const { data } = await supabase
+        .from('product_variants')
+        .select('product_id')
+        .in('size', selectedSizes)
+        .gt('stock_quantity', 0);
+      
+      const ids = new Set((data || []).map(v => v.product_id));
+      setSizeFilteredIds(ids);
+    };
+    fetchVariantsBySize();
+  }, [selectedSizes]);
+
+  const products = filteredProducts.filter(p => {
+    if (sizeFilteredIds !== null && !sizeFilteredIds.has(p.id)) return false;
+    return true;
+  });
+
   const clearFilters = () => {
+    setSelectedSizes([]);
     setPriceRange([0, 5000]);
   };
 
@@ -122,7 +151,9 @@ const Shop = () => {
             {/* Desktop Filters */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <ProductFilters
+                selectedSizes={selectedSizes}
                 priceRange={priceRange}
+                onSizesChange={setSelectedSizes}
                 onPriceChange={setPriceRange}
                 onClearFilters={clearFilters}
               />
@@ -147,7 +178,9 @@ const Shop = () => {
                       </SheetHeader>
                       <div className="mt-6">
                         <ProductFilters
+                          selectedSizes={selectedSizes}
                           priceRange={priceRange}
+                          onSizesChange={setSelectedSizes}
                           onPriceChange={setPriceRange}
                           onClearFilters={clearFilters}
                         />

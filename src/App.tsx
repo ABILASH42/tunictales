@@ -23,6 +23,9 @@ import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminSettings from "./pages/admin/AdminSettings";
 import ResetPassword from "./pages/ResetPassword";
+import Contact from "./pages/Contact";
+import SizeGuide from "./pages/SizeGuide";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +51,9 @@ const App = () => (
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/designer" element={<Designer />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/size-guide" element={<SizeGuide />} />
+                <Route path="/faq" element={<FAQ />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminLayout />}>

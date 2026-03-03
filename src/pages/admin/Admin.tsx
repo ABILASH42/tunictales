@@ -406,6 +406,35 @@ const AdminOrders = () => {
       toast.error('Failed to update status');
     } else {
       toast.success('Status updated');
+      
+      // Send shipped email notification
+      if (status === 'shipped') {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            const response = await fetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-shipped-email`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({ orderId }),
+              }
+            );
+            
+            if (response.ok) {
+              toast.success('Shipping notification email sent to customer');
+            } else {
+              console.error('Failed to send shipped email');
+            }
+          }
+        } catch (emailError) {
+          console.error('Error sending shipped email:', emailError);
+        }
+      }
+      
       fetchOrders();
     }
   };

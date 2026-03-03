@@ -21,7 +21,7 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState('newest');
   
   // Filters
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
   const categorySlug = searchParams.get('category');
 
@@ -98,7 +98,7 @@ const Shop = () => {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 50000]);
+    setPriceRange([0, 5000]);
   };
 
   return (

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FOOTER_LINKS } from '@/lib/constants';
-import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useState, forwardRef } from 'react';
 import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
@@ -41,15 +41,6 @@ export const Footer = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
             <div className="flex items-center gap-4">
               <a href="#" className="text-primary-foreground/70 hover:text-accent transition-colors">
                 <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-primary-foreground/70 hover:text-accent transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-primary-foreground/70 hover:text-accent transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-primary-foreground/70 hover:text-accent transition-colors">
-                <Youtube className="h-5 w-5" />
               </a>
             </div>
           </div>

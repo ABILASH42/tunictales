@@ -24,6 +24,7 @@ const Shop = () => {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const categorySlug = searchParams.get('category');
 
@@ -33,62 +34,72 @@ const Shop = () => {
 
   const fetchProducts = async () => {
     setIsLoading(true);
-    
-    // First get category_id if category slug is provided
-    let categoryId: string | null = null;
-    let categoryNotFound = false;
-    
-    if (categorySlug) {
-      const { data: categoryData } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('slug', categorySlug)
-        .maybeSingle();
-      
-      if (categoryData) {
-        categoryId = categoryData.id;
-      } else {
-        // Category slug provided but doesn't exist - show no products
-        categoryNotFound = true;
+    setFetchError(null);
+
+    try {
+      // First get category_id if category slug is provided
+      let categoryId: string | null = null;
+      let categoryNotFound = false;
+
+      if (categorySlug) {
+        const { data: categoryData, error: categoryError } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('slug', categorySlug)
+          .maybeSingle();
+
+        if (categoryError) throw categoryError;
+
+        if (categoryData) {
+          categoryId = categoryData.id;
+        } else {
+          // Category slug provided but doesn't exist - show no products
+          categoryNotFound = true;
+        }
       }
-    }
-    
-    // If category was requested but not found, show empty results
-    if (categoryNotFound) {
+
+      // If category was requested but not found, show empty results
+      if (categoryNotFound) {
+        setAllProducts([]);
+        return;
+      }
+
+      let query = supabase.from('products').select('*');
+
+      // Filter by category if provided
+      if (categoryId) {
+        query = query.eq('category_id', categoryId);
+      }
+
+      if (searchParams.get('filter') === 'new') {
+        query = query.eq('is_new', true);
+      }
+
+      switch (sortBy) {
+        case 'price-low':
+          query = query.order('base_price', { ascending: true });
+          break;
+        case 'price-high':
+          query = query.order('base_price', { ascending: false });
+          break;
+        case 'popular':
+          query = query.eq('is_featured', true).order('created_at', { ascending: false });
+          break;
+        default:
+          query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      setAllProducts((data as Product[]) || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
       setAllProducts([]);
+      setFetchError('Unable to load products right now. Please refresh and try again.');
+    } finally {
       setIsLoading(false);
-      return;
     }
-    
-    let query = supabase.from('products').select('*');
-    
-    // Filter by category if provided
-    if (categoryId) {
-      query = query.eq('category_id', categoryId);
-    }
-    
-    if (searchParams.get('filter') === 'new') {
-      query = query.eq('is_new', true);
-    }
-    
-    switch (sortBy) {
-      case 'price-low':
-        query = query.order('base_price', { ascending: true });
-        break;
-      case 'price-high':
-        query = query.order('base_price', { ascending: false });
-        break;
-      case 'popular':
-        query = query.eq('is_featured', true).order('created_at', { ascending: false });
-        break;
-      default:
-        query = query.order('created_at', { ascending: false });
-    }
-    
-    const { data } = await query;
-    
-    setAllProducts((data as Product[]) || []);
-    setIsLoading(false);
   };
 
   // Client-side filtering for price and size
@@ -108,14 +119,21 @@ const Shop = () => {
       return;
     }
     const fetchVariantsBySize = async () => {
-      const { data } = await supabase
-        .from('product_variants')
-        .select('product_id')
-        .in('size', selectedSizes)
-        .gt('stock_quantity', 0);
-      
-      const ids = new Set((data || []).map(v => v.product_id));
-      setSizeFilteredIds(ids);
+      try {
+        const { data, error } = await supabase
+          .from('product_variants')
+          .select('product_id')
+          .in('size', selectedSizes)
+          .gt('stock_quantity', 0);
+
+        if (error) throw error;
+
+        const ids = new Set((data || []).map(v => v.product_id));
+        setSizeFilteredIds(ids);
+      } catch (error) {
+        console.error('Error fetching variants by size:', error);
+        setSizeFilteredIds(new Set());
+      }
     };
     fetchVariantsBySize();
   }, [selectedSizes]);
@@ -234,6 +252,13 @@ const Shop = () => {
               {/* Product Grid */}
               {isLoading ? (
                 <ProductGridSkeleton />
+              ) : fetchError ? (
+                <div className="text-center py-16">
+                  <p className="text-muted-foreground mb-4">{fetchError}</p>
+                  <Button variant="outline" onClick={fetchProducts}>
+                    Retry
+                  </Button>
+                </div>
               ) : products.length === 0 ? (
                 <div className="text-center py-16">
                   <p className="text-muted-foreground mb-4">No products found</p>

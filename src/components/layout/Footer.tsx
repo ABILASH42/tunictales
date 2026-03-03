@@ -39,7 +39,7 @@ export const Footer = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>
               Indian ethnic wear, celebrating the rich heritage of traditional craftsmanship.
             </p>
             <div className="flex items-center gap-4">
-              <a href="http://instagram.com/tunic_tales/" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-accent transition-colors">
+              <a href="https://www.instagram.com/tunic_tales?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-accent transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
             </div>

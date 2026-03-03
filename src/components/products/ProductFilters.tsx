@@ -26,7 +26,7 @@ export function ProductFilters({
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const hasActiveFilters = priceRange[0] > 0 || priceRange[1] < 50000;
+  const hasActiveFilters = priceRange[0] > 0 || priceRange[1] < 5000;
 
   return (
     <div className="space-y-6">
@@ -51,8 +51,8 @@ export function ProductFilters({
               value={priceRange}
               onValueChange={(value) => onPriceChange(value as [number, number])}
               min={0}
-              max={50000}
-              step={500}
+              max={5000}
+              step={100}
               className="mb-4"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
